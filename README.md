@@ -4,7 +4,11 @@
 
 # Resources
 
+## Motivation
+
+- Msimang _et al_. (2018) Increased importation of dengue cases into South Africa: a risk for establishment of local endemicity? [_NICD Bulletin_ 16(1): 20-28](https://www.dropbox.com/s/cwkeb6pmkl09so0/NICD-Bulletin-Vol16-Iss1-April-2018-Final.pdf?dl=1)
+
 ## Temperature and EIP
 
 - [Spreadsheet from JP's Applied Ecology of Infectious Diseases course at UF](https://docs.google.com/spreadsheets/d/1GAkjD98BEj8xFs6r4E5wYd2pz3dRVpyj2QrKVcc-XmU/edit?usp=sharing)
-- [Code from Tom and Carl's Dengue model for Yucatan](https://github.com/tjhladish/dengue/blob/master/raw_data/weather/calculate_daily_eip.R) ([more info](https://journals.plos.org/plosntds/article/file?id=10.1371/journal.pntd.0004661.s001&type=supplementary)
+- [Code from Tom and Carl's Dengue model for Yucatan](https://github.com/tjhladish/dengue/blob/master/raw_data/weather/calculate_daily_eip.R) ([more info](https://journals.plos.org/plosntds/article/file?id=10.1371/journal.pntd.0004661.s001&type=supplementary))
