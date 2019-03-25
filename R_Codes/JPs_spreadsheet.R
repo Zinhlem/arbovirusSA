@@ -2,6 +2,7 @@
 # Converting Spreadsheet code into R
 
 rm(list=ls())
+setwd("~/arbovirusSA/R_Codes")
 
 #parameters 
 parms <- c( Tmin = 10.4,
@@ -102,3 +103,54 @@ Cum.Progress.max.min <- Cum.Progress(Temp.max.min,
                                              parms, Time.spent.max.min)
 
 ########################### ** DAily Max Min2** ###########################
+
+
+library(readxl)
+file <- system.file("C:/Users/zinhlem/Documents/arbovirusSA/R_Codes", "DailyMaxMin2.xlsx", package = "xlsx")
+
+my_data <- read_excel("C:/Users/zinhlem/Documents/arbovirusSA/R_Codes/DailyMaxMin2.xlsx")  
+
+              ### Min temp data
+
+Temp.min2 <- my_data$TempC_min
+
+rate.min2 <- Rate.temp(Temp.min2, parms)
+
+Time.min2 <- my_data$Time_Tmin
+
+Progress.min2 <- Progress(Temp.min2, parms, Time.min2)
+
+
+
+             ##max temp data
+
+Temp.max2 <- my_data$TempC_max
+
+rate.max2 <- Rate.temp(Temp.max2, parms)
+
+Time.max2 <- my_data$Time_Tmax
+
+Progress.max2 <- Progress(Temp.max2, parms, Time.max2)
+
+
+
+##  Total Time spent
+
+Time.spent <- Time.min2 + Time.max2
+
+Progress.Total <- Progress.min2 + Progress.max2
+ 
+##Cumulative progress
+
+
+Cum.Progress.Total <- function(ProgressTotal){
+        Progress.Total <- ProgressTotal
+        Cum.Progress.Total <- ProgressTotal[1]
+for (i in 2: length(Progress.Total)){
+        Cum.Progress.Total[i] <- Cum.Progress.Total[i-1] + Progress.Total[i]
+                
+}
+        return(Cum.Progress.Total)
+}
+
+Cum.progress.total <- Cum.Progress.Total(Progress.Total)
