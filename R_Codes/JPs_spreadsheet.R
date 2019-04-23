@@ -9,7 +9,9 @@ parms <- c( Tmin = 10.4,
             Tmax = 39.5,
             alpha = 0.00006)
 
-############################ **Rate(T)** ###############################
+
+# Rate(T) -----------------------------------------------------------------
+
 
 #Temperature range
 Temp <- c(parms["Tmin"]:parms["Tmax"]) 
@@ -39,7 +41,9 @@ plot(Temp, dev, type = "l", col = "blue", lwd = 3,
      xlab = "Temperature", ylab = "Development time (days)")
 
 
-########################## **Constant (C) Daily** ########################
+
+# Constant (C) Daily ------------------------------------------------------
+
 
 TempC <- rep( x = 30, times = 60) #constant temp
 
@@ -65,58 +69,60 @@ Cum.Progress <- function(temp, params, time){
 
 Cum.ProgressC <- Cum.Progress(TempC, parms, Time.spent)
 
-#########################**Daily Mean (mean temp)** ############################
 
-Temp.mean <- c(29.7, 29.75, 29.75, 30.3, 30, 30.55, 29.75, 29.75, 31.1,
-            31.4, 30.55, 29.75, 30, 28.35, 28.65, 28.6, 29.2, 29.7, 
-            29.45, 29.7, 29.2, 28.05, 26.95, 29.15, 28.65, 29.45, 30, 
-            29.45, 29.15, 29.7, 29.45, 29.15, 29.15, 29.45, 28.65, 28.35, 
-            27.5, 28.35, 30.25, 29.75, 30.55, 30.85, 27.8, 29.2, 29.2, 
-            28.35, 29.15, 27.5, 29.15, 29.2, 28.65, 29.75, 29.75, 28.9, 
-            28.05, 28.65, 26.4, 28.9, 26.95, 29.75)    #daily mean temp 
+# Loading data ------------------------------------------------------------
+library(readxl)
+
+file <- system.file("~/GitHub/arbovirusSA/R_Codes", "Temperature_Effect_on_Development", package = "xlsx")
+
+# Daily Mean (mean temp) --------------------------------------------------
+
+my_data <- read_excel("~/GitHub/arbovirusSA/R_Codes/Temperature_Effect_on_Development.xlsx",
+                      sheet = "DailyMean" ) 
+
+Temp.mean <- my_data$TempC
 
 rate.mean <- Rate.temp(Temp.mean, parms)
 
-Progress.mean <- Progress(Temp.mean, parms, Time.spent)
+Progress.mean <- Progress(Temp.mean, parms, my_data$`Time spent`)
 
-Cum.Progress.mean <- Cum.Progress(Temp.mean, parms, Time.spent)
+Cum.Progress.mean <- Cum.Progress(Temp.mean, parms, my_data$`Time spent`)
 
 plot(Temp.mean, type = "l", col = "blue", lwd = 3, ylab = "Temperature")
 
 plot(rate.mean, type = "l", col = "red", lwd = 3, ylab = "Development rate")
              
 
-
 ########################### ** DAily Max Min** ###########################
 
-Temp.max.min <- c(27.2, 22.8, 27.2, 18.9, 21.1, 16.1, 23.9, 15, 25, 20, 25.6, 21.1,
-              25.6, 23.3, 26.1, 21.7, 26.1, 21.7, 25.6, 23.9, 25.6, 21.1, 26.1, 20.6, 20,
-              17.2, 21.7, 16.1, 23.9, 18.9, 23.9, 19.4) 
+my_data1 <- read_excel("~/GitHub/arbovirusSA/R_Codes/Temperature_Effect_on_Development.xlsx",
+                      sheet = "DailyMaxMin" ) 
+
+
+Temp.max.min <- my_data1$TempC
 
 rate.max.min <- Rate.temp(Temp.max.min, parms)
 
-Time.spent.max.min <- 0.5
+Time.spent.max.min <- my_data1$`Time spent`
 
 Progress.max.min <- Progress(Temp.max.min, parms, Time.spent.max.min)
 
 Cum.Progress.max.min <- Cum.Progress(Temp.max.min, 
                                              parms, Time.spent.max.min)
 
-########################### ** DAily Max Min2** ###########################
+
+# DAily Max Min2 ----------------------------------------------------------
 
 
-library(readxl)
-file <- system.file("C:/Users/zinhlem/Documents/arbovirusSA/R_Codes", "DailyMaxMin2.xlsx", package = "xlsx")
+             ### Min temp data
+my_data2 <- read_excel("~/GitHub/arbovirusSA/R_Codes/Temperature_Effect_on_Development.xlsx",
+                       sheet = "DailyMaxMin2" ) 
 
-my_data <- read_excel("C:/Users/zinhlem/Documents/arbovirusSA/R_Codes/DailyMaxMin2.xlsx")  
-
-              ### Min temp data
-
-Temp.min2 <- my_data$TempC_min
+Temp.min2 <- my_data2$TempC_min
 
 rate.min2 <- Rate.temp(Temp.min2, parms)
 
-Time.min2 <- my_data$Time_Tmin
+Time.min2 <- my_data2$Time_Tmin
 
 Progress.min2 <- Progress(Temp.min2, parms, Time.min2)
 
@@ -124,11 +130,11 @@ Progress.min2 <- Progress(Temp.min2, parms, Time.min2)
 
              ##max temp data
 
-Temp.max2 <- my_data$TempC_max
+Temp.max2 <- my_data2$TempC_max
 
 rate.max2 <- Rate.temp(Temp.max2, parms)
 
-Time.max2 <- my_data$Time_Tmax
+Time.max2 <- my_data2$Time_Tmax
 
 Progress.max2 <- Progress(Temp.max2, parms, Time.max2)
 
