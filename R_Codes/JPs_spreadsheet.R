@@ -158,7 +158,7 @@ Progress.max2 <- Progress(Temp.max2, parms, Time.max2)
 
 par(mfrow=c(1,1))
 plot(Temp.max2, type = "l", col = "red", lwd = 2, ylab = "Temperature")
-lines(Temp.min2, type = "l", col = "blue")
+lines(Temp.min2, type = "l", col = "blue", lwd = 2)
 
 
 
