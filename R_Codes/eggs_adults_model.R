@@ -82,14 +82,15 @@ Mosquito.pop <- Mosquito.pop[-1,]
 
 # introduce birth rate -----------------------------------------
 
-b = rep( x = 1/7, times = length(Cum.ProgressT)) #make it T function
+b = rep(x = 1/7, times = length(Cum.ProgressT)) #make it T function
 
 Eggs1 <- ifelse(b < runif(1), eggs + 1, eggs)
 
 TotalPop1 <- Adults + Eggs1
 
-Mosquito.pop1 <- data.frame(rate, dev, ProgressT, Cum.ProgressT, Eggs, Adults,
+Mosquito.pop1 <- data.frame(rate, dev, ProgressT, Cum.ProgressT, Eggs1, Adults,
                             TotalPop1)
+
 
 # par(mfrow=c(2,1))
 # plot(Temp, rate, type = "l", col = "red", lwd = 3,
