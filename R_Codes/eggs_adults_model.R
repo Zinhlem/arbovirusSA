@@ -84,7 +84,7 @@ Mosquito.pop <- Mosquito.pop[-1,]
 
 b = rep(x = 1/7, times = length(Cum.ProgressT)) #make it T function
 
-Eggs1 <- ifelse(b < runif(1), eggs + 1, eggs)
+Eggs1 <- ifelse(b < runif(length(b)), eggs + 1, eggs)
 
 TotalPop1 <- Adults + Eggs1
 
