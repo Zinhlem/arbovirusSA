@@ -57,13 +57,40 @@ Cum.Progress <- function(temp, params, time){
 
 Cum.ProgressT <- Cum.Progress(Temp, parms, Time.spent)
 
+# Update Eggs  -------------------------------------------------------------
+Eggs <- 1
+Adults <- 0
+
+#fix so it works for a vec of temp
+
+UpdateEggs <- function(CurrentEggs, CurrentAdults, Tmp, params, time){
+        NewEggs <- c(CumProg = 0, Eggs = ifelse(runif(1) > 0.5, 20, 0), Age = 0)
+        ProgressT <- Progress(25, parms, Time.spent) #take a vector of T
+        CUmProgE <-  sum(ProgressT, NewEggs["CumProg"])
+        Today <- c(CurrentEggs, NewEggs)
+        Today["CumProg"] <- CUmProgE
+        TotEggs <- sum(Today["Eggs"])
+        NewAdults <- sum(Today["Eggs"]["CUmProg" > 1])
+        CurrentEggs <- Today["Eggs"]["CUmProg" < 1]  ##problematic
+        
+        return(c( "TotEggs" = TotEggs,"NewAdults" = NewAdults, 
+                  "CurrentEggs" = CurrentEggs))
+        
+        
+}
+
+UpdateEggs(Eggs, Adults, Temp, parms, Time.spent)
+
+
+
+
 
 # Eggs emerge as adults at once -------------------------------------------
 
 #Initial pop
-eggs <- 95
+eggs <- 1
 
-adults <- 5
+adults <- 0
 
 #if cum.progress > 1, adults == eggs+adults0, else adults == adults        
 Adults <- ifelse(Cum.ProgressT > 1, eggs+adults, adults) 
@@ -77,7 +104,7 @@ TotalPop <- Eggs + Adults
 
 Mosquito.pop <- data.frame(rate, dev, ProgressT, Cum.ProgressT, Eggs, Adults, TotalPop)
 #remove inf
-Mosquito.pop <- Mosquito.pop[-1,]
+#Mosquito.pop <- Mosquito.pop[-1,]
 
 
 # introduce birth rate -----------------------------------------
@@ -90,6 +117,9 @@ TotalPop1 <- Adults + Eggs1
 
 Mosquito.pop1 <- data.frame(rate, dev, ProgressT, Cum.ProgressT, Eggs1, Adults,
                             TotalPop1)
+
+
+
 
 
 # par(mfrow=c(2,1))
