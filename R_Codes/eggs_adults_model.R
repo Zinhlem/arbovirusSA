@@ -67,11 +67,11 @@ UpdateEggs <- function(CurrentEggs, CurrentAdults, Tmp, params, time){
         NewEggs <- c(CumProg = 0, Eggs = ifelse(runif(1) > 0.5, 20, 0), Age = 0)
         ProgressT <- Progress(25, parms, Time.spent) #take a vector of T
         CUmProgE <-  sum(ProgressT, NewEggs["CumProg"])
-        Today <- c(CurrentEggs, NewEggs)
+        Today <- c(NewEggs, CurrentEggs)
         Today["CumProg"] <- CUmProgE
         TotEggs <- sum(Today["Eggs"])
         NewAdults <- sum(Today["Eggs"]["CUmProg" > 1])
-        CurrentEggs <- Today["Eggs"]["CUmProg" < 1]  ##problematic
+        CurrentEggs <- sum(Today["Eggs"]["CUmProg" < 1])  ##problematic
         
         return(c( "TotEggs" = TotEggs,"NewAdults" = NewAdults, 
                   "CurrentEggs" = CurrentEggs))
@@ -80,8 +80,6 @@ UpdateEggs <- function(CurrentEggs, CurrentAdults, Tmp, params, time){
 }
 
 UpdateEggs(Eggs, Adults, Temp, parms, Time.spent)
-
-
 
 
 
