@@ -50,7 +50,7 @@ Cum.Progress <- function(temp, params, time){
         Progress <- Progress(temp, params, time)
         Cum.Progress <- Progress[1]
         for(i in 2 : length(Progress)){
-                Cum.Progress[i] <- Cum.Progress[i-1] + Progress[i]
+                Cum.Progress <- Cum.Progress[i-1] + Progress
         }
         return(Cum.Progress)
 }
@@ -64,23 +64,22 @@ Adults <- 0
 #fix so it works for a vec of temp
 
 UpdateEggs <- function(CurrentEggs, CurrentAdults, Tmp, params, time){
-        
-        for (i in length(Tmp)){
-        NewEggs <- c(CumProg = 0, Eggs = ifelse(runif(length(i)) > 0.5, 2, 0), Age = 0)
+      
+        NewEggs <- c(CumProg = 0, Eggs = ifelse(runif(1) > 0.5, 2, 0), Age = 0)
         ProgressT <- Progress(Tmp, parms, Time.spent) #take a vector of T
-        CUmProgE <-  sum(ProgressT[i], NewEggs[i]["CumProg"])
-        Today <- NewEggs[i]
-        Today["Eggs"] <- sum(Today[i]["Eggs"], CurrentEggs[i])
+        CUmProgE <-  sum(ProgressT, NewEggs["CumProg"])
+        Today <- NewEggs
+        Today["Eggs"] <- sum(Today["Eggs"], CurrentEggs)
         Today["CumProg"] <- CUmProgE
         TotEggs <- sum(Today["Eggs"])
         NewAdults <- sum(Today["CumProg"] > 1, na.rm = T)
         CurrentEggs <- sum(Today["CumProg"] < 1 , na.rm = T)  ##problematic
-        }
+        
         return(c( "TotEggs" = TotEggs,"NewAdults" = NewAdults, 
                   "CurrentEggs" = CurrentEggs))
-        
         }
-
+        
+      
 UpdateEggs(Eggs, Adults, Temp, parms, Time.spent)
 
 
