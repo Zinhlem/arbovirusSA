@@ -47,16 +47,17 @@ ProgressT <- Progress(Temp, parms, Time.spent)
 
 #cumulative progress, when =1 egg becomes adult
 Cum.Progress <- function(temp, params, time){
-        Progress <- Progress(temp, params, time)
-        Cum.Progress <- Progress[1]
-        for(i in 2 : length(Progress)){
-                Cum.Progress <- Cum.Progress[i-1] + Progress
+  Progress <- Progress(temp, params, time)      
+  cum.progress <- c()
+        for(i in 2 : length(temp)){
+                 cum.progress[i] <- Progress[i-1] + Progress[i]
         }
-        return(Cum.Progress)
+        return(c(cum.progress))
 }
 
 Cum.ProgressT <- Cum.Progress(Temp, parms, Time.spent)
 
+ProgressT
 # Update Eggs  -------------------------------------------------------------
 Eggs <- 1
 Adults <- 0
@@ -64,24 +65,27 @@ Adults <- 0
 #fix so it works for a vec of temp
 
 UpdateEggs <- function(CurrentEggs, CurrentAdults, Tmp, params, time){
-      
-        NewEggs <- c(CumProg = 0, Eggs = ifelse(runif(1) > 0.5, 2, 0), Age = 0)
-        ProgressT <- Progress(Tmp, parms, Time.spent) #take a vector of T
-        CUmProgE <-  sum(ProgressT, NewEggs["CumProg"])
-        Today <- NewEggs
-        Today["Eggs"] <- sum(Today["Eggs"], CurrentEggs)
-        Today["CumProg"] <- CUmProgE
-        TotEggs <- sum(Today["Eggs"])
-        NewAdults <- sum(Today["CumProg"] > 1, na.rm = T)
-        CurrentEggs <- sum(Today["CumProg"] < 1 , na.rm = T)  ##problematic
-        
-        return(c( "TotEggs" = TotEggs,"NewAdults" = NewAdults, 
-                  "CurrentEggs" = CurrentEggs))
-        }
-        
-      
-UpdateEggs(Eggs, Adults, Temp, parms, Time.spent)
+  
+  NewEggs <- c(CumProg = 0.3, Eggs = ifelse(runif(1) > 0.5, 2, 0), Age = 0) 
+  ProgressT <- Progress(Tmp, parms, Time.spent) #take a vector of T
+  CumProgE <-  sum(ProgressT, NewEggs["CumProg"])
+  Today <- NewEggs
+  Today["Eggs"] <- sum(Today["Eggs"], CurrentEggs, na.rm = T)
+  Today["CumProg"] <- CumProgE
+  TotEggs <- sum(Today["Eggs"], na.rm = T)
+  Newadults <- if(Today["CumProg"] > 1) {
+    sum(Today["Eggs"], na.rm = T)
+  } else {Adults}
+  NewAdults <- c(Adults = Newadults, Age = 0)
+  #CurrentEggs <- sum(Today["CumProg"] < 1 , na.rm = T)  ##problematic
+  CurrentEggs <- if(Today["CumProg"] < 1) {
+    sum(Today["Eggs"], na.rm = T)
+  } else {sum(Today["Eggs"]) - sum(NewAdults["Adults"])}
+  
+  return(c(Today, "CurrentEggs" = CurrentEggs, NewAdults))
+}
 
+ UpdateEggs(Eggs, Adults, Tmp = Temp, parms, Time.spent)
 
 
 # Eggs emerge as adults at once -------------------------------------------
