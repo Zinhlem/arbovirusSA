@@ -65,16 +65,21 @@ AdultsAge <- 0
 
 EggsCount <- function(temp, params, time, Egg0, eggAge){
   
-  Eggs <- ifelse(Temp > 30, 1 , 0)
+  Eggs <- ifelse(Temp > 25, 1 , 0) #birth
   CumProgEggs <- Cum.Progress(temp, params, time)
-  EggAge <- ifelse(Eggs >= 1 & CumProgEggs > 1, eggAge + 1, eggAge) 
+  age <- ifelse(Eggs >= 1 & CumProgEggs > 1, eggAge + 1, eggAge) #why &cum.prog? leave for now
+   EggAge <- c()
+   for(i in 2 : length(temp)){
+    EggAge[i] <- age[i - 1] + age[i]
+  }
+  
   TotEggs <- c()
   for(i in 2 : length(temp)){
-    TotEggs[i] <- Eggs[i-1] + Eggs[i]   #fix this
+    TotEggs[i] <- sum(Eggs[i])
   }
   
   return(data.frame("Temp" = temp, "Eggs" = Eggs, "Cumpro" = CumProgEggs, 
-                    "Age" = EggsAge, "TotalEgs" = TotEggs))
+                    "Age" = EggAge, "TotalEgs" = TotEggs))
   
 }
 Eggsdf <- EggsCount(Temp, parms, Time.spent,EggsInit, EggsAge)
@@ -89,3 +94,4 @@ AdultsCount <- function(temp, params, time, Egg0, eggAge, adult0, adultAge){
 Adultsdf <- AdultsCount(Temp, parms, Time.spent,Eggsdf$Age, EggsAge, AdultsInit, AdultsAge )
 
 Popdf <- data.frame(Eggsdf, Adultsdf)
+
