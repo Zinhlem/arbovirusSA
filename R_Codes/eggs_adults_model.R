@@ -57,7 +57,6 @@ Cum.Progress <- function(temp, params, time){
 
 Cum.ProgressT <- Cum.Progress(Temp, parms, Time.spent)
 
-ProgressT
 # Update Eggs  -------------------------------------------------------------
 Eggs <- 1
 Adults <- 0
@@ -66,12 +65,13 @@ Adults <- 0
 
 UpdateEggs <- function(CurrentEggs, CurrentAdults, Tmp, params, time){
   
-  NewEggs <- c(CumProg = 0.3, Eggs = ifelse(runif(1) > 0.5, 2, 0), Age = 0) 
+  NewEggs <- c(CumProg = 0.3, Eggs = ifelse(runif(1) > 0.5, 0, 0), Age = 0) 
   ProgressT <- Progress(Tmp, parms, Time.spent) #take a vector of T
-  CumProgE <-  sum(ProgressT, NewEggs["CumProg"])
+  CumProgE <-  ProgressT + NewEggs["CumProg"]
   Today <- NewEggs
+  Today["CumProg"] <- CumProgE ##fix this
   Today["Eggs"] <- sum(Today["Eggs"], CurrentEggs, na.rm = T)
-  Today["CumProg"] <- CumProgE
+  Today["Age"] <- ifelse(NewEggs["CumProg"] < 1, NewEggs["Age"] + 1, NewEggs["Age"])
   TotEggs <- sum(Today["Eggs"], na.rm = T)
   Newadults <- if(Today["CumProg"] > 1) {
     sum(Today["Eggs"], na.rm = T)
@@ -80,7 +80,8 @@ UpdateEggs <- function(CurrentEggs, CurrentAdults, Tmp, params, time){
   #CurrentEggs <- sum(Today["CumProg"] < 1 , na.rm = T)  ##problematic
   CurrentEggs <- if(Today["CumProg"] < 1) {
     sum(Today["Eggs"], na.rm = T)
-  } else {sum(Today["Eggs"]) - sum(NewAdults["Adults"])}
+  } else{
+    sum(Today["Eggs"]) - sum(NewAdults["Adults"])}
   
   return(c(Today, "CurrentEggs" = CurrentEggs, NewAdults))
 }
