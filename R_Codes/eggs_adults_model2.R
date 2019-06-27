@@ -59,25 +59,26 @@ Cum.ProgressT <- Cum.Progress(Temp, parms, Time.spent)
 
 ##Initial conditions
 EggsInit <- 1
-AdultsInit <- 0
-EggsAge <- 0
+AdultsInit <- 0 
 AdultsAge <- 0
+
+EggsAge <- rep(x = 0, times = length(Temp))
+
 
 EggsCount <- function(temp, params, time, Egg0, eggAge){
   
-  Eggs <- ifelse(Temp > 25, 1 , 0) #birth
   CumProgEggs <- Cum.Progress(temp, params, time)
-  age <- ifelse(Eggs >= 1 & CumProgEggs > 1, eggAge + 1, eggAge) #why &cum.prog? leave for now
-   EggAge <- c()
+  Eggs <- ifelse(CumProgEggs > 1, 1 , 0) #birth
+  age <- c()
+  age <- ifelse(Eggs >= 1, eggAge + 1, eggAge) #why &cum.prog? leave for now
+  EggAge <- c()
    for(i in 2 : length(temp)){
-    EggAge[i] <- age[i - 1] + age[i]
+    EggAge[i] <- sum(age[i-1], age[i], na.rm = T) #on the right track though but something off
   }
-  
   TotEggs <- c()
   for(i in 2 : length(temp)){
     TotEggs[i] <- sum(Eggs[i])
   }
-  
   return(data.frame("Temp" = temp, "Eggs" = Eggs, "Cumpro" = CumProgEggs, 
                     "Age" = EggAge, "TotalEgs" = TotEggs))
   
@@ -87,7 +88,11 @@ head(Eggsdf)
  
 AdultsCount <- function(temp, params, time, Egg0, eggAge, adult0, adultAge){
   Adults <- ifelse(Eggsdf$Cumpro > 1, adult0 +1, Egg0 )
-  AdultAge <- ifelse(Eggsdf$Cumpro > 1, adultAge + 1, adultAge)
+  A.age <- ifelse(Eggsdf$Cumpro > 1, adultAge + 1, adultAge)
+  AdultAge <- c()
+  for(i in 2 : length(temp)){
+    AdultAge[i] <- A.age[i - 1] + A.age[i]
+  }
   return(data.frame("Adults" = Adults, "AdultsAge" = AdultAge))
 }
 
