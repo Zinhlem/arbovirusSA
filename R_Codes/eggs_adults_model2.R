@@ -61,19 +61,17 @@ Cum.ProgressT <- Cum.Progress(Temp, parms, Time.spent)
 EggsInit <- 1
 AdultsInit <- 0 
 AdultsAge <- 0
-
-EggsAge <- rep(x = 0, times = length(Temp))
-
+#EggsAge <- rep(x = 0, times = length(Temp))
+EggsAge <- 0
 
 EggsCount <- function(temp, params, time, Egg0, eggAge){
   
   CumProgEggs <- Cum.Progress(temp, params, time)
-  Eggs <- ifelse(CumProgEggs > 1, 1 , 0) #birth
-  age <- c()
-  age <- ifelse(Eggs >= 1, eggAge + 1, eggAge) #why &cum.prog? leave for now
+  Eggs <- ifelse(CumProgEggs < 1, 1 , 0) #birth
+  age <- ifelse(Eggs >= 1, eggAge + 1, 0) #why &cum.prog? leave for now
   EggAge <- c()
    for(i in 2 : length(temp)){
-    EggAge[i] <- sum(age[i-1], age[i], na.rm = T) #on the right track though but something off
+    EggAge[i] <- ifelse(Eggs[i] >=1, sum(EggAge[i-1], age[i], na.rm = T), 0)
   }
   TotEggs <- c()
   for(i in 2 : length(temp)){
@@ -85,18 +83,21 @@ EggsCount <- function(temp, params, time, Egg0, eggAge){
 }
 Eggsdf <- EggsCount(Temp, parms, Time.spent,EggsInit, EggsAge)
 head(Eggsdf)
+
  
 AdultsCount <- function(temp, params, time, Egg0, eggAge, adult0, adultAge){
-  Adults <- ifelse(Eggsdf$Cumpro > 1, adult0 +1, Egg0 )
-  A.age <- ifelse(Eggsdf$Cumpro > 1, adultAge + 1, adultAge)
+  Adults <- ifelse(Eggsdf$Cumpro > 1, adult0 +1, Egg0 - 1) #subtract emerged mosquitoes instead of 1
+  A.age <- ifelse(Eggsdf$Cumpro > 1, adultAge + 1, 0)
   AdultAge <- c()
   for(i in 2 : length(temp)){
-    AdultAge[i] <- A.age[i - 1] + A.age[i]
+    AdultAge[i] <- ifelse(Eggsdf$Cumpro[i] >1, 
+                          sum(AdultAge[i - 1] , A.age[i], na.rm = T), 0)
   }
   return(data.frame("Adults" = Adults, "AdultsAge" = AdultAge))
 }
 
-Adultsdf <- AdultsCount(Temp, parms, Time.spent,Eggsdf$Age, EggsAge, AdultsInit, AdultsAge )
+Adultsdf <- AdultsCount(Temp, parms, Time.spent, Eggsdf$Eggs, EggsAge,
+                        AdultsInit, AdultsAge )
 
 Popdf <- data.frame(Eggsdf, Adultsdf)
 
