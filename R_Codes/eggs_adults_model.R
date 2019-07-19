@@ -19,18 +19,18 @@ Temp <- c(parms["Tmin"]:parms["Tmax"])
 
 #Development Rate 
 Rate.temp <- function(temp, params){
-        with(as.list(params),{
-                alpha * temp * (temp - Tmin) * sqrt(Tmax - temp)
-        })
+  with(as.list(params),{
+    alpha * temp * (temp - Tmin) * sqrt(Tmax - temp)
+  })
 }
 
 rate <- Rate.temp(Temp, parms)
 
 #Developmental Time 
 Dev.time <- function(temp, params){
-        with(as.list(params),{
-                1/ Rate.temp(temp, params)
-        })
+  with(as.list(params),{
+    1/ Rate.temp(temp, params)
+  })
 }
 
 dev <- Dev.time(Temp, parms)
@@ -39,96 +39,64 @@ dev <- Dev.time(Temp, parms)
 Time.spent <- 1
 
 #time taken to emerge as an adult from egg
-Progress <- function(temp, params, time){
-        Rate.temp(temp, params) * time
+Progress <- function(temp, params, t.spent){
+  Rate.temp(temp, params) * t.spent
+
 }
 
 ProgressT <- Progress(Temp, parms, Time.spent)
 
 #cumulative progress, when =1 egg becomes adult
-Cum.Progress <- function(temp, params, time){
-  Progress <- Progress(temp, params, time)      
-  cum.progress <- c()
-        for(i in 2 : length(temp)){
-                 cum.progress[i] <- Progress[i-1] + Progress[i]
-        }
-        return(c(cum.progress))
+Cum.Progress <- function(temp, params, t.spent){
+  Progress <- Progress(temp, params, t.spent) 
+  diffinv(Progress)
 }
 
 Cum.ProgressT <- Cum.Progress(Temp, parms, Time.spent)
 
-# Update Eggs  -------------------------------------------------------------
-Eggs <- 1
-Adults <- 0
 
-#fix so it works for a vec of temp
+# Initial Population ------------------------------------------------------
 
-UpdateEggs <- function(CurrentEggs, CurrentAdults, Tmp, params, time){
-  
-  NewEggs <- c(CumProg = 0.3, Eggs = ifelse(runif(1) > 0.5, 0, 0), Age = 0) 
-  ProgressT <- Progress(Tmp, parms, Time.spent) #take a vector of T
-  CumProgE <-  ProgressT + NewEggs["CumProg"]
-  Today <- NewEggs
-  Today["CumProg"] <- CumProgE ##fix this
-  Today["Eggs"] <- sum(Today["Eggs"], CurrentEggs, na.rm = T)
-  Today["Age"] <- ifelse(NewEggs["CumProg"] < 1, NewEggs["Age"] + 1, NewEggs["Age"])
-  TotEggs <- sum(Today["Eggs"], na.rm = T)
-  Newadults <- if(Today["CumProg"] > 1) {
-    sum(Today["Eggs"], na.rm = T)
-  } else {Adults}
-  NewAdults <- c(Adults = Newadults, Age = 0)
-  #CurrentEggs <- sum(Today["CumProg"] < 1 , na.rm = T)  ##problematic
-  CurrentEggs <- if(Today["CumProg"] < 1) {
-    sum(Today["Eggs"], na.rm = T)
-  } else{
-    sum(Today["Eggs"]) - sum(NewAdults["Adults"])}
-  
-  return(c(Today, "CurrentEggs" = CurrentEggs, NewAdults))
+InitEggs <- c(Eggs = 1, Age = Time.spent, CumProg = 0)
+
+
+# NewEggs model --------------------------------------------------------------
+NewEggs <- function(temp, params, t.spent){
+  NE <- data.frame()
+  for(i in 1:length(temp)){
+    time <- i
+    Eggs <- ifelse(temp[i] < 20, 1, 5)
+    Age <-  t.spent
+    CumProg <- 0
+    NE <- rbind(NE, data.frame(time, Eggs, Age, CumProg))
+    }
+  return(NE)
+}
+Neweggs <- as.data.frame(NewEggs(Temp, parms, Time.spent))
+
+
+# Current Eggs ------------------------------------------------------------
+CurrentEggs <- function(temp, params, t.spent, initpop){
+  progEggs <- Progress(temp, params, t.spent)
+  cumprogEggs <- Cum.Progress(temp, params, t.spent)
+  #Age <- data.frame()
+  CurrentEggs <- data.frame()
+  for(i in 2:length(temp)){
+    time <- i
+    Eggs <- ifelse(cumprogEggs[i] < 1, Neweggs$Eggs[i], 0)
+    Age <- Neweggs$Age[i-1] + t.spent #fix age is not changing per time step
+    #CumProg <- sum(cumprogEggs[i-1], progEggs[i], na.rm = T) #adding to new cohorts
+    CumProg <- sum(Neweggs$CumProg[i-1], progEggs[i], na.rm = T)
+    Adults <- ifelse(cumprogEggs[i] >= 1, Neweggs$Eggs[i], 0) #first cumprog
+    CurrentEggs <- rbind(CurrentEggs, data.frame(time, Eggs, Age, CumProg, Adults))
+  }
+  return(CurrentEggs)
 }
 
- UpdateEggs(Eggs, Adults, Tmp = Temp, parms, Time.spent)
+head(CurrentEggs(Temp, parms, Time.spent, init), 10)
 
 
-# Eggs emerge as adults at once -------------------------------------------
+#Update Eggs function ----------------------------------------------------
 
-#Initial pop
-eggs <- 1
-
-adults <- 0
-
-#if cum.progress > 1, adults == eggs+adults0, else adults == adults        
-Adults <- ifelse(Cum.ProgressT > 1, eggs+adults, adults) 
-
-#if cum.progress < 1, eggs == eggs, else eggs == 0
-Eggs <- ifelse(Cum.ProgressT < 1, eggs, 0)
-         #But what happens when the eggs don't emerge at the same time?
-
-#Total Population size
-TotalPop <- Eggs + Adults
-
-Mosquito.pop <- data.frame(rate, dev, ProgressT, Cum.ProgressT, Eggs, Adults, TotalPop)
-#remove inf
-#Mosquito.pop <- Mosquito.pop[-1,]
-
-
-# introduce birth rate -----------------------------------------
-
-b = rep(x = 1/7, times = length(Cum.ProgressT)) #make it T function
-
-Eggs1 <- ifelse(b < runif(length(b)), eggs + 1, eggs)
-
-TotalPop1 <- Adults + Eggs1
-
-Mosquito.pop1 <- data.frame(rate, dev, ProgressT, Cum.ProgressT, Eggs1, Adults,
-                            TotalPop1)
-
-
-
-
-
-# par(mfrow=c(2,1))
-# plot(Temp, rate, type = "l", col = "red", lwd = 3,
-#      xlab = "Temperature", ylab = "Development rate")
-# plot(Temp, dev, type = "l", col = "blue", lwd = 3,
-#      xlab = "Temperature", ylab = "Development time (days)")
+#  ???????????????
 
