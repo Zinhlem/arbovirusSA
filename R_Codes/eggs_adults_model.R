@@ -81,10 +81,13 @@ CurrentEggs <- function(temp, params, t.spent, initpop){
   cumprogEggs <- Cum.Progress(temp, params, t.spent)
   #Age <- data.frame()
   CurrentEggs <- data.frame()
+  Age <- data.frame()
   for(i in 2:length(temp)){
     time <- i
     Eggs <- ifelse(cumprogEggs[i] < 1, Neweggs$Eggs[i], 0)
+    age <- ifelse(Eggs >= 1, t.spent, 0)
     Age <- Neweggs$Age[i-1] + t.spent #fix age is not changing per time step
+    #Age <- Age[i-1] + t.spent
     #CumProg <- sum(cumprogEggs[i-1], progEggs[i], na.rm = T) #adding to new cohorts
     CumProg <- sum(Neweggs$CumProg[i-1], progEggs[i], na.rm = T)
     Adults <- ifelse(cumprogEggs[i] >= 1, Neweggs$Eggs[i], 0) #first cumprog
