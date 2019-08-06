@@ -5,14 +5,19 @@
 rm(list=ls())
 
 ##parameters
-params <- c(temp <- 33, #16:33,
-            a <- 5.3,
-            b <- -0.24,
-            k <- 0.16)
+params <- c(a = 5.3,
+            b = -0.24,
+            k = 0.16)
+temp <- 33
 
 
 ##rate function from tsetse emergence function 
-EIP_Fxn <- (1+exp(a+b*temp))/k
+EIP_Fxn <- function(temprature,parms){
+  with(as.list(parms),{
+       (1+exp(a+b*temp))/ k
+  })
+}
+EIP <- EIP_Fxn(temp,params)
 #plot(temp, EIP_Fxn)
 
 
@@ -20,22 +25,23 @@ EIP_Fxn <- (1+exp(a+b*temp))/k
 ## start of with one mosquito
 #msqt doesn't neccesarily have to be 1 day old
 ## infcetivity =1 when mosquito is infected
-msqt_init <- c(Age = 1, EIP = 0, infectivity = 0)
+msqt_init <- c(Age = 1, days_infec_bite = 0, infectivity = 0) 
+# *days_infec_bite* - days since infectious feed/bite
 
 ##function to update mosquito age, status and EIPO
-update <- function(time, eip, tmp){ 
+update <- function(temprature, parms, eip, timestep, n){ 
   EIP_calc <- eip     #Calculated EIP from EIP function
   Msqt_data <- data.frame() 
   
-  for(i in 2:time){
+  for(i in seq(2, n ,timestep)){
     time <- i - 1 #to make time start from 1
     Age <- msqt_init['Age'] + time  #update at each time step
-    EIP <- msqt_init['EIP'] + time
-    infectivity <- ifelse(EIP <= EIP_calc, 0, 1) #0 if not infected, 1 otherwise
-    Msqt_data <- rbind(Msqt_data, data.frame(time, tmp, EIP_calc, Age, EIP, infectivity))
+    days_infec_bite <- msqt_init['days_infec_bite'] + time
+    infectivity <- ifelse(days_infec_bite <= EIP_calc, 0, 1) #0 if not infected, 1 otherwise
+    Msqt_data <- rbind(Msqt_data, data.frame(time, temprature, EIP_calc, Age, days_infec_bite, infectivity))
   }
   return(Msqt_data)
 }
 
-mosquito_dat <- as.data.frame(update(20, EIP_Fxn, temp))
+mosquito_dat <- as.data.frame(update(temprature = temp, parms = params, eip = EIP, timestep = 1, n =20 ))
 head(mosquito_dat, 10)
