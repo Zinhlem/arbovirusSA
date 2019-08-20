@@ -8,7 +8,7 @@ rm(list=ls())
 params <- c(a = 5.3,
             b = -0.24,
             k = 0.16)
-temp <- 33
+temp <- 10:40
 
 
 ##rate function from tsetse emergence function 
@@ -19,7 +19,6 @@ EIP_Fxn <- function(temprature,parms){
 }
 EIP <- EIP_Fxn(temp,params)
 #plot(temp, EIP_Fxn)
-
 
 ##initial conditions
 ## start of with one mosquito
@@ -34,14 +33,19 @@ update <- function(temprature, parms, eip, timestep, n){
   Msqt_data <- data.frame() 
   
   for(i in seq(2, n ,timestep)){
-    time <- i - 1 #to make time start from 1
+    time <- i - timestep #to make time start from 1
     Age <- msqt_init['Age'] + time  #update at each time step
     days_infec_bite <- msqt_init['days_infec_bite'] + time
-    infectivity <- ifelse(days_infec_bite <= EIP_calc, 0, 1) #0 if not infected, 1 otherwise
-    Msqt_data <- rbind(Msqt_data, data.frame(time, temprature, EIP_calc, Age, days_infec_bite, infectivity))
+    tmprt <- temprature[i]
+    EIPs_calc <- EIP_calc[i]
+    #infectivity <- ifelse(days_infec_bite <= EIPs_calc, 0, 1) #0 if not infected, 1 otherwise
+    Msqt_data <- rbind(Msqt_data, data.frame(time, tmprt, EIPs_calc, Age, days_infec_bite))
   }
   return(Msqt_data)
 }
 
-mosquito_dat <- as.data.frame(update(temprature = temp, parms = params, eip = EIP, timestep = 1, n =20 ))
+mosquito_dat <- as.data.frame(update(temprature = temp, parms = params, eip = EIP, timestep = 1, n = length(temp) ))
 head(mosquito_dat, 10)
+
+plot(mosquito_dat$tmprt, mosquito_dat$EIPs_calc, lty = 3, xlab = "Temperature",
+     ylab = "EIP", col = "red")
