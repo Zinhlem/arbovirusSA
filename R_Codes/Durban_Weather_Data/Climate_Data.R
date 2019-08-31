@@ -84,5 +84,6 @@ clean_precip_data <- function(precip_df, start, end){
 
 #Clean precipitation DF
 precip_df_59_00 <- clean_precip_data(precip_Durban)
-precip2_df_71_00 <- clean_precip_data(precip_Durban2)
 plot(as.Date(precip_df_59_00$dates), precip_df_59_00$Durban_precipitation, type = "l")
+precip2_df_71_00 <- clean_precip_data(precip_Durban2)
+plot(precip2_df_71_00$dates, precip2_df_71_00$Durban_precipitation, type = "l")
