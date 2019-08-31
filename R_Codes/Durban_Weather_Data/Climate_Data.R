@@ -22,10 +22,10 @@ clean_temp_data <- function(temperature_df){
     temperature_df <- temperature_df[-c(1, 2),] #remove the first 2 rows with characters the other 3 have temp of -999
     temperature_df <- as.numeric(temperature_df)
     temperature_df <- as.data.frame(temperature_df) #turn it back to dataframe 
-   names(temperature_df) <- c("Durban_temperature")
+    names(temperature_df) <- c("Durban_temperature")
     head(temperature_df) #1992 to 2012
     
-    temperature_df <- temperature_df %>% filter_all(any_vars(. >= 0)) #removing the undefined values -999
+    temperature_df <- temperature_df %>% filter_all(any_vars(. != -999)) #removing the undefined values -999
     
 }
 
