@@ -44,6 +44,7 @@ min_temp_DF <- clean_temp_data(min_temp_Data, startDate, endDate)
 
 plot(as.Date(max_temp_DF$date), max_temp_DF$Durban_temperature, type = "l")
 plot(as.Date(min_temp_DF$date), min_temp_DF$Durban_temperature, type = "l")
+
 ###***************************PRECIPITATION****************************************
 
 #precipitation data from Durban betwen 1959 to 2000
@@ -71,7 +72,7 @@ clean_precip_data <- function(precip_df, start, end){
     precip_df <- precip_df[-c(1, 2),] #remove the first 2 rows with characters the other 3 have temp of -999
     precip_df <- as.numeric(precip_df)
     precip_df <- as.data.frame(precip_df) #turn it back to dataframe
-    dates_df <- startDatePrecip1:endDatePrecip1
+    dates_df <- start:end
     dates_data <- as.data.frame(dates_df)
     names(dates_data) <- c("dates")
     names(precip_df) <- c("Durban_precipitation")
@@ -83,7 +84,7 @@ clean_precip_data <- function(precip_df, start, end){
 }
 
 #Clean precipitation DF
-precip_df_59_00 <- clean_precip_data(precip_Durban)
+precip_df_59_00 <- clean_precip_data(precip_Durban, start = startDatePrecip1, end = endDatePrecip1 )
 plot(as.Date(precip_df_59_00$dates), precip_df_59_00$Durban_precipitation, type = "l")
-precip2_df_71_00 <- clean_precip_data(precip_Durban2)
-plot(precip2_df_71_00$dates, precip2_df_71_00$Durban_precipitation, type = "l")
+precip2_df_71_00 <- clean_precip_data(precip_Durban2, start = startDatePrecip2, end = endDatePrecip2)
+plot(as.Date(precip2_df_71_00$dates), precip2_df_71_00$Durban_precipitation, type = "l")
