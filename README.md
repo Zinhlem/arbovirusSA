@@ -11,3 +11,8 @@ Using mosquito and climate data we will develop mathematical models to estimate 
 
 Input data: Climate data
             Mosquito population data
+
+Research question:
+What is the likelihood that an introduction of dengue fever will cause an outbreak in South Africa? Is dengue fever likely to become endemic if it is successfully introduced?
+
+ Aim: Identify and prioritize objectives for a dengue risk-assessment project that will investigate the likelihood of dengue fever causing an epidemic and/or becoming endemic in South Africa. 
