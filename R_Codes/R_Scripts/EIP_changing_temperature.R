@@ -14,10 +14,11 @@ params <- c(a = 5.3,
 
 #temperature
 
-# my_data <- read_xlsx(paste(here(),"~/GitHub/arbovirusSA/R_Codes/Temperature_Effect_on_Development.xlsx",sep="/"),
-#                      sheet = "DailyMean") 
+ #my_data <- read_xlsx(paste("~/GitHub/arbovirusSA/R_Codes/Input_data/Temperature_Effect_on_Development.xlsx",sep="/"),
+  #                    sheet = "DailyMean") 
 
-temp <- 10:40 #my_data$TempC
+temp <- 10:40 
+#temp <- my_data$TempC
 
 
 # Changing temperaure changing EIP ----------------------------------------

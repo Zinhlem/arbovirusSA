@@ -44,7 +44,8 @@ update <- function(temprature, parms, eip, timestep, n){
   return(Msqt_data)
 }
 
-mosquito_dat <- as.data.frame(update(temprature = temp, parms = params, eip = EIP, timestep = 1, n = length(temp) ))
+mosquito_dat <- as.data.frame(update(temprature = temp, parms = params, 
+                                     eip = EIP, timestep = 1, n = length(temp) ))
 head(mosquito_dat, 10)
 
 plot(mosquito_dat$tmprt, mosquito_dat$EIPs_calc, lty = 3, xlab = "Temperature",
