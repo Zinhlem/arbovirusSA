@@ -9,9 +9,7 @@ This project will use R to develop the codes. These codes can be run from an off
 
 Using mosquito and climate data we will develop mathematical models to estimate the change in mosquito populations at different temperatures, which will in turn be used to to model dengue transmission dynamics.
 
-Input data: Climate data 
-
-            Mosquito population data
+Input data: Climate data and mosquito population data
 
 Research question:
 What is the likelihood that an introduction of dengue fever will cause an outbreak in South Africa? Is dengue fever likely to become endemic if it is successfully introduced?
