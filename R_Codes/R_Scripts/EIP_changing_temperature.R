@@ -13,7 +13,6 @@ source("Functions_mosqt_pop.R")
  my_data <- read_xlsx(paste("~/GitHub/arbovirusSA/R_Codes/Input_data/Temperature_Effect_on_Development.xlsx",sep="/"),
                       sheet = "DailyMean") 
 
-#temp <- 10:40 
 temp <- my_data$TempC
 
 
