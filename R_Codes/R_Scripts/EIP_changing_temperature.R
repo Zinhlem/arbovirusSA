@@ -7,41 +7,24 @@ rm(list=ls())
 library(here)
 library(readxl)
 
-##parameters
-params <- c(a = 5.3,
-            b = -0.24,
-            k = 0.16)
-
+source("Functions_mosqt_pop.R")
 #temperature
 
- #my_data <- read_xlsx(paste("~/GitHub/arbovirusSA/R_Codes/Input_data/Temperature_Effect_on_Development.xlsx",sep="/"),
-  #                    sheet = "DailyMean") 
+ my_data <- read_xlsx(paste("~/GitHub/arbovirusSA/R_Codes/Input_data/Temperature_Effect_on_Development.xlsx",sep="/"),
+                      sheet = "DailyMean") 
 
-temp <- 10:40 
-#temp <- my_data$TempC
+#temp <- 10:40 
+temp <- my_data$TempC
 
 
 # Changing temperaure changing EIP ----------------------------------------
 
-##rate function from tsetse emergence function
-EIP_Fxn <- function(temprature,parms){
-  with(as.list(parms),{
-    (1+exp(a+b*temprature))/ k
-  })
-}
-
 EIP <- EIP_Fxn(temp,params)
-#plot(temp, EIP_Fxn)
+plot(temp, EIP)
 
-## Cumulative EIP, Eip >= 1 inefctious
+### Cumulative EIP, Eip >= 1 inefctious
 # Cum EIR is the parasite development rate 
 
-Cum_EIR_Fxn <- function(temprature, parms){ 
-  with(as.list(parms),{
-    cum_eip_rate <- 1/EIP_Fxn(temprature, parms) #rate fucntion : 1/EIP
-    diffinv(cum_eip_rate)
-  })
-}
 Cum_EIR <- Cum_EIR_Fxn(temp, params) ## Cumulative EI rate
 
 ##initial conditions
@@ -52,22 +35,6 @@ msqt_init <- c(Age = 1, days_infec_bite = 0, infectivity = 0)
 # *days_infec_bite* - days since infectious feed/bite
 
 ##function to update mosquito age, status and EIPO
-update <- function(temprature, parms, eip, timestep, n){
-  EIP_Cum_Calc <- eip #cum EIP
-  Msqt_data <- data.frame()
-  
-  for(i in seq(2, n ,timestep)){
-    time <- i - timestep #to make time start from 1
-    Age <- msqt_init['Age'] + time  #update at each time step
-    days_infec_bite <- msqt_init['days_infec_bite'] + time
-    tmprt <- temprature[i]
-    Cum_EI_rate <- EIP_Cum_Calc[i] #evaluates cum EIP at [i]
-    Cum_EI_rate <- ifelse(Cum_EI_rate >= 1, 1, Cum_EI_rate) #ensure rate isn't >1
-    infectivity <- ifelse(Cum_EI_rate < 1, 0, 1) #0 if not infected, 1 otherwise
-    Msqt_data <- rbind(Msqt_data, data.frame(time, Age, tmprt, days_infec_bite, Cum_EI_rate, infectivity))
-  }
-  return(Msqt_data)
-}
 
 mosquito_dat_EIP_Temp <- as.data.frame(update(temprature = temp, parms = params , eip = Cum_EIR , timestep = 1, n = length(temp) ))
 head(mosquito_dat_EIP_Temp)
@@ -85,6 +52,8 @@ Cum_Fixed_EIP_Fxn <- function(temprature, parms){
 
 Cum_Fixed_EIR <- Cum_Fixed_EIP_Fxn(temp, params)
 
+
+##function to update mosquito age, status and EIPO
 mosquito_dat_fixed_eip <- as.data.frame(update(temprature = temp, parms = params, eip = Cum_Fixed_EIR, timestep = 1, n = length(temp) ))
 head(mosquito_dat_fixed_eip)
 
