@@ -5,7 +5,13 @@
 rm(list=ls())
 
 
-source("Functions_mosqt_pop.R")
+#source("Functions_mosqt_pop.R")
+library(dengueUtils) #use the package instead of the source function
+
+#parameters
+params <- list(a = 5.3,
+               b = -0.24,
+               k = 0.16)
 
 #temperature
 temp <- 10:40
@@ -33,3 +39,4 @@ head(mosquito_dat, 10)
 
 plot(mosquito_dat$time, mosquito_dat$EIPs_calc, lty = 3, xlab = "Temperature",
      ylab = "EIP", col = "red")
+

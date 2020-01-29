@@ -6,8 +6,14 @@ rm(list=ls())
 
 library(here)
 library(readxl)
+library(dengueUtils)
 
-source("Functions_mosqt_pop.R")
+
+#parameters
+params <- list(a = 5.3,
+            b = -0.24,
+            k = 0.16)
+
 #temperature
 
  my_data <- read_xlsx(paste("~/GitHub/arbovirusSA/R_Codes/Input_data/Temperature_Effect_on_Development.xlsx",sep="/"),
@@ -80,3 +86,4 @@ lines(mosquito_dat_EIP_Temp$time, mosquito_dat_fixed_eip_temp$Cum_EI_rate, lwd =
 abline( h = 1, lwd = 2, lty = 2, col = "gray")
 legend("bottomright", legend = c("Changing temperature and EIR","Fixed EIR, varying temperature",
                                  "Fixed temperature and EIP"), col = c("red","blue", "black"), lwd = 3)
+
