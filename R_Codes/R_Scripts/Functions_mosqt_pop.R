@@ -2,7 +2,7 @@
 
 library(here)
 library(readxl)
-library(knitr)
+
 
 #(s = system.file("examples", "Functions_mosq_pop.R", package = "knitr"))
 
