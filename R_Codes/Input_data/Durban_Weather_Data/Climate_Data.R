@@ -50,7 +50,7 @@ min_temp_DF <- clean_temp_data(min_temp_Data, Temp.Dates[1], Temp.Dates[2])
 plot(as.Date(max_temp_DF$date), max_temp_DF$Durban_temperature, type = "l", col = "red",
      ylab = "Temperature", xlab = "Years", main = "Recorded temperatures in Durban between 1992 and 2012")
 lines(as.Date(min_temp_DF$date), min_temp_DF$Durban_temperature, type = "l", col = "blue")
-legend("topleft", legend = c("Max temp", "Min Temp"), col = c("red", "blue"), lty=c(1,1), cex=0.3)
+legend("topleft", legend = c("Max temp", "Min Temp"), col = c("red", "blue"), lty=1, cex=0.35, )
 
 
 write.csv(list(as.Date(min_temp_DF$date), min_temp_DF$Durban_temperature), 'Durban_min.csv')
