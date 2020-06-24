@@ -4,7 +4,6 @@
 library(tidyverse)
 library(zoo)
 
-rm(list = ls())
 
 #max temperature data from Durban betwen 1992 to 2012
 max_temp_Data <- read.delim("0240808A2_tasmax.txt",
